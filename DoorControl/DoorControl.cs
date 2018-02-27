@@ -53,7 +53,7 @@ namespace DoorControl
 
         public void RequestEntry(string id)
         {
-            
+            Console.WriteLine("Der er lavet en merge, wuhuuu");
         }
 
         public void DoorOpened()
