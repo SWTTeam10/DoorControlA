@@ -12,14 +12,19 @@ namespace DoorControl
         private IUserValidation _userValidation;
         private IEntryNotification _entry;
         private DoorControlState _state;
-        public bool DoorOpen { get; set; }
-        public bool DoorClose { get; set; }
+        private IAlarm _alarm; 
+        //public bool DoorOpen { get; set; }
+        //public bool DoorClose { get; set; }
+        private bool DoorOpen;
 
-        public DoorControl(IDoor door, IUserValidation UV, IEntryNotification EN)
+        private bool DoorClose; 
+
+        public DoorControl(IDoor door, IUserValidation UV, IEntryNotification EN, IAlarm alarm)
         {
             _door = door;
             _userValidation = UV;
             _entry = EN;
+            _alarm = alarm; 
             _state = DoorControlState.Closed;
         }
 
@@ -43,10 +48,15 @@ namespace DoorControl
                         _entry.NotifyEntryGranted();
                         _state = DoorControlState.Opening;    
                     }
-                    else if(RequestEntry(id)==false)
+                    if (RequestEntry(id)==false)
                     {   
                         _entry.NotifyEntryDenied();
                         _state = DoorControlState.Closed;
+                    }
+                    else if(RequestEntry(id) == false && DoorOpen)
+                    {
+                        _door.Close();
+                        _alarm.SignalAlarm();
                     }
                     break;
 
@@ -61,6 +71,7 @@ namespace DoorControl
                     DoorClosed();
                     _state = DoorControlState.Closed;
                     break;
+
             }   
         }
 

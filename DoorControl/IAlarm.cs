@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DoorControl
 {
-    interface IAlarm
+    public interface IAlarm
     {
         void SignalAlarm();
     }
