@@ -32,28 +32,41 @@ namespace DoorControl
 
         public void Hej()
         {
+            var id = "";
             switch (_state)
             {
+                  
                 case DoorControlState.Closed:
-                    _door.Open();
-                    _state = DoorControlState.Opening;
+                    if (RequestEntry(id))
+                    {
+                        _door.Open();
+                        _entry.NotifyEntryGranted();
+                        _state = DoorControlState.Opening;    
+                    }
+                    else if(RequestEntry(id)==false)
+                    {   
+                        _entry.NotifyEntryDenied();
+                        _state = DoorControlState.Closed;
+                    }
                     break;
 
                 case DoorControlState.Opening:
-                    _door.Close();
+                    DoorOpened();
+                    //_door.Close();
                     _state = DoorControlState.Closing;
                     break;
 
                 case DoorControlState.Closing:
-
+                    _door.Close();
+                    DoorClosed();
                     _state = DoorControlState.Closed;
                     break;
             }   
         }
 
-        public void RequestEntry(string id)
+        public bool RequestEntry(string id)
         {
-            Console.WriteLine("Der er lavet en merge, wuhuuu");
+           return  _userValidation.ValidateEntryRequest(id);
         }
 
         public void DoorOpened()
