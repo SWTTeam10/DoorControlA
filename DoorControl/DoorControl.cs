@@ -11,6 +11,7 @@ namespace DoorControl
         private IDoor _door;
         private IUserValidation _userValidation;
         private IEntryNotification _entry;
+        private DoorControlState _state;
         public bool DoorOpen { get; set; }
         public bool DoorClose { get; set; }
 
@@ -19,6 +20,35 @@ namespace DoorControl
             _door = door;
             _userValidation = UV;
             _entry = EN;
+            _state = DoorControlState.Closed;
+        }
+
+        private enum DoorControlState
+        {
+            Closed,
+            Closing,
+            Opening
+        }
+
+        public void Hej()
+        {
+            switch (_state)
+            {
+                case DoorControlState.Closed:
+                    _door.Open();
+                    _state = DoorControlState.Opening;
+                    break;
+
+                case DoorControlState.Opening:
+                    _door.Close();
+                    _state = DoorControlState.Closing;
+                    break;
+
+                case DoorControlState.Closing:
+
+                    _state = DoorControlState.Closed;
+                    break;
+            }   
         }
 
         public void RequestEntry(string id)
@@ -30,7 +60,6 @@ namespace DoorControl
         {
             DoorClose = false;
             DoorOpen = true;
-
         }
 
         public void DoorClosed()
