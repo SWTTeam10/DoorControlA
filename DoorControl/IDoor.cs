@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace DoorControl
 {
-    public class Class1
+    public interface IDoor
     {
-        //Hallo
+        void Open();
+        void Close();
     }
 }
